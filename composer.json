@@ -1,16 +1,13 @@
 {
-    "name": "yiisoft/yii2-app-basic",
-    "description": "Yii 2 Basic Application Template",
-    "keywords": ["yii2", "framework", "basic", "application template"],
-    "homepage": "http://www.yiiframework.com/",
+    "name": "themightydeity/unadb",
+    "description": "UNA Database for open statements",
+    "keywords": ["una", "forum-asia", "una", "database", "open statements"],
+    "homepage": "http://www.forum-asia.org/",
     "type": "project",
     "license": "BSD-3-Clause",
     "support": {
-        "issues": "https://github.com/yiisoft/yii2/issues?state=open",
-        "forum": "http://www.yiiframework.com/forum/",
-        "wiki": "http://www.yiiframework.com/wiki/",
-        "irc": "irc://irc.freenode.net/yii",
-        "source": "https://github.com/yiisoft/yii2"
+        "issues": "https://github.com/themightydeity/unadb/issues?state=open",
+        "source": "https://github.com/themightydeity/unadb"
     },
     "minimum-stability": "stable",
     "require": {
@@ -18,7 +15,7 @@
         "yiisoft/yii2": "*",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
-		"dektrium/yii2-user": "0.9.*@dev"
+        "dektrium/yii2-user": "0.9.*@dev"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

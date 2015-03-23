@@ -3,34 +3,36 @@
 namespace app\controllers;
 
 use Yii;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Docs;
+use app\models\DocsSearch;
+use app\models\Audits;
+use yii\filters\AccessControl;
+use yii\web\UploadedFile;
 
 class SiteController extends Controller
 {
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post'],
+                    'delete' => ['post'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'only'=>['create','delete','update','logout'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ],
+                ]
+            ]
         ];
     }
 
@@ -40,41 +42,97 @@ class SiteController extends Controller
             'error' => [
                 'class' => 'yii\web\ErrorAction',
             ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
         ];
     }
 
     public function actionIndex()
     {
-        return $this->render('index');
+        $searchModel = new DocsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ]);
     }
 
-    public function actionLogin()
+    
+    
+    public function actionCreate()
     {
-        if (!\Yii::$app->user->isGuest) {
-            return $this->goHome();
+        $model = new Docs();
+        $model->scenario = 'create';
+        if ($model->load(Yii::$app->request->post())) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+            if($model->file && $model->validate()){
+                if($model->save()){
+                    $fileUploaded = $model->file->saveAs("uploads/".$model->doc_id."_".$model->file->baseName . '.' . $model->file->extension);
+                    if($fileUploaded){
+                        Audits::addLog($model->doc_id,'create');
+                        return $this->redirect(['index']);
+                    }else{
+                        $this->error = "Couldn't save file but doc was created";
+                    }
+                }
+            }
         }
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+        
+    }
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+    /**
+     * Updates an existing Docs model.
+     * If update is successful, the browser will be redirected to the 'index' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $model->setscenario('update');
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Audits::addLog($model->doc_id,'update');
+            return $this->redirect(['index']);
         } else {
-            return $this->render('login', [
+            return $this->render('update', [
                 'model' => $model,
             ]);
         }
     }
 
-    public function actionLogout()
+    /**
+     * Deletes an existing Docs model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionDelete($id)
     {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
+        $fileName = $id."_".$this->findModel($id)->file;
+        if($this->findModel($id)->delete()){
+            Audits::addLog($id,'delete');
+            unlink('uploads/'.$fileName);
+        }
+        return $this->redirect(['index']);
     }
 
+    /**
+     * Finds the Docs model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return Docs the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Docs::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+    
     public function actionContact()
     {
         $model = new ContactForm();
@@ -92,5 +150,12 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+    
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->goHome();
     }
 }

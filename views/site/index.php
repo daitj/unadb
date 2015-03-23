@@ -1,51 +1,60 @@
 <?php
+use yii\helpers\Html;
+use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
 /* @var $this yii\web\View */
-$this->title = 'My Yii Application';
+/* @var $this yii\web\View */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = 'UNA Database';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-index">
+<div class="docs-index">
 
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
+    <h1><?= Html::encode($this->title) ?></h1>
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
+    <p>
+        <?= (Yii::$app->user->isGuest)?"":Html::a('Create new', ['site/create'], ['class' => 'btn btn-success']) ?>
+    </p>
+<?php
+$topics = ArrayHelper::map(app\models\Topics::find()->all(), 'topic','topic');
+asort($topics);
+$sessions = ArrayHelper::map(app\models\Sessions::find()->all(), 'session_name','session_name');
+asort($sessions);
+$countries = ArrayHelper::map(app\models\Countries::find()->all(), 'country','country');
+asort($countries);
+?>
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel'=>$searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            'title',
+            [
+                'attribute'=>'topic_name',
+                'filter'=> $topics,
+                'value'=>'topics.topic',
+            ],
+            [
+                'attribute'=>'country_name',
+                'filter'=> $countries,
+                'value'=>'countries.country'
+            ],
+            [
+                'attribute'=>'session_name',
+                'filter'=> $sessions,
+                'value'=>'sessions.session_name'
+            ],
+            'date_council:date',
+            ['attribute'=>'file','format'=>'raw','value'=>function($data){
+                return Html::a('<span class="glyphicon glyphicon-paperclip"></span> Download','uploads/'.$data->doc_id.'_'.$data->file,['class'=>'']);
+            }],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'visible'=> !Yii::$app->user->isGuest,
+                'template'=>'{update}{delete}',
+            ],
+        ],
+    ]); ?>
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
-        </div>
-
-    </div>
 </div>

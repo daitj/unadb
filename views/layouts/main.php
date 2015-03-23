@@ -4,7 +4,6 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
-
 /* @var $this \yii\web\View */
 /* @var $content string */
 
@@ -25,8 +24,27 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
     <div class="wrap">
         <?php
+            if(Yii::$app->user->isGuest){
+                $menu_items = [['label' => 'Login', 'url' => ['/user/security/login']]];
+            }else{
+                $menu_items = [['label' => 'Other action', 'items'=>[
+                    ['label' => 'All Topics', 'url' => ['/topics/index']],
+                    ['label' => 'All Countries', 'url' => ['/countries/index']],
+                    ['label' => 'All Sessions', 'url' => ['/sessions/index']],
+                    ['label' => 'Logs', 'url' => ['/audits/index']],
+                    ['label' => 'My Account', 'url' => ['/user/settings/account']],
+                    ]],
+                ];
+                if(Yii::$app->user->identity->getIsAdmin()){
+                    $menu_items[] = ['label' => 'Users',
+                    'url' => ['/user/admin']];
+                }
+                $menu_items[]= ['label' => 'Logout (' . Yii::$app->user->identity->username . ')',
+                    'url' => ['/site/logout'],
+                'linkOptions' => ['data-method' => 'post']];
+            }
             NavBar::begin([
-                'brandLabel' => 'My Company',
+                'brandLabel' => 'UNA Database',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',
@@ -34,16 +52,7 @@ AppAsset::register($this);
             ]);
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
-                'items' => [
-                    ['label' => 'Home', 'url' => ['/site/index']],
-                    ['label' => 'About', 'url' => ['/site/about']],
-                    ['label' => 'Contact', 'url' => ['/site/contact']],
-                    Yii::$app->user->isGuest ?
-                        ['label' => 'Login', 'url' => ['/site/login']] :
-                        ['label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-                            'url' => ['/site/logout'],
-                            'linkOptions' => ['data-method' => 'post']],
-                ],
+                'items' => $menu_items,
             ]);
             NavBar::end();
         ?>
@@ -58,8 +67,8 @@ AppAsset::register($this);
 
     <footer class="footer">
         <div class="container">
-            <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-            <p class="pull-right"><?= Yii::powered() ?></p>
+            <p class="pull-left">&copy; <a href="mailto:binay.devkota@gmail.com">Binay Devkota</a> <?= date('Y') ?> | <a href="<?php echo Yii::$app->urlManager->createUrl('/site/about'); ?>">About</a> | <a href="<?php echo Yii::$app->urlManager->createUrl('/site/contact'); ?>">Contact us</a></p>
+            <p class="pull-right">Made for FORUM-ASIA, by Binay Devkota. <?= Yii::powered() ?></p>
         </div>
     </footer>
 
