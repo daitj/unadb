@@ -26,7 +26,7 @@ return [
 ];
 ```
 
-For database structure:
+##For database structure:
 Create a new db and import mysql.schema.sql file, one user "admin" with password "admin123" is added already.
 
 Also check and edit the other files in the `config/` directory to customize your application.
