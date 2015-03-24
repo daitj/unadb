@@ -215,7 +215,7 @@ ALTER TABLE `token`
 --
 
 INSERT INTO `user` (`id`, `username`, `email`, `password_hash`, `auth_key`, `confirmed_at`, `unconfirmed_email`, `blocked_at`, `registration_ip`, `created_at`, `updated_at`, `flags`) VALUES
-(1, 'admin', 'admin@localhost', '$2y$10$eHNh/MktztlLJNcdE5E73Oa4aMFwmwMFKbquwqfa/ul4ocU3qD4qa', 'vZdOmabn_kZ9wD3eUUbnxVwbFc085MxR', 1426578397, NULL, NULL, '127.0.0.1', 1426578098, 1427104089, 0),
+(1, 'admin', 'admin@localhost', '$2y$10$eHNh/MktztlLJNcdE5E73Oa4aMFwmwMFKbquwqfa/ul4ocU3qD4qa', 'vZdOmabn_kZ9wD3eUUbnxVwbFc085MxR', 1426578397, NULL, NULL, '127.0.0.1', 1426578098, 1427104089, 0);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

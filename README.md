@@ -7,10 +7,14 @@ REQUIREMENTS
 ------------
 
 The minimum requirement by this application template that your Web server supports PHP 5.4.0.
+Knowledge of composer
+Knowledge of Yii2
 
 
 CONFIGURATION
 -------------
+
+First of all use composer and update the project so you will get all the dependencies.
 
 ### Database
 
